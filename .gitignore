@@ -1,3 +1,20 @@
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Compiled files
+*.class
+target/
+out/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
@@ -24,6 +41,7 @@ bin/
 
 ### VS Code ###
 .vscode/
+.idea/
 
 ### Mac OS ###
 .DS_Store

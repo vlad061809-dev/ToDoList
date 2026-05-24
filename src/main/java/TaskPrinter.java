@@ -13,6 +13,7 @@ public final class TaskPrinter {
         System.out.println("2. " + commands[1]);
         System.out.println("3. " + commands[2]);
         System.out.println("4. " + commands[3]);
+        System.out.println("5. " + commands[4]);
         System.out.println("0. " + commands[4]);
         System.out.println("Выберите пункт меню:");
     }
