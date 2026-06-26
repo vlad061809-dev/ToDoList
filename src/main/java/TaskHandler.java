@@ -1,14 +1,17 @@
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TaskHandler {
+@Slf4j
+
+public  class TaskHandler {
 
     private List<Task> tasks = new ArrayList<>();
     private int nextId = 1;
     private final DatabaseSyncService syncService = new DatabaseSyncService();
 
-    // Конструктор - загружает задачи из БД при запуске
     public TaskHandler() {
         loadTasksFromDatabase();
     }
@@ -21,9 +24,9 @@ public class TaskHandler {
                     .mapToInt(Task::getId)
                     .max()
                     .orElse(0) + 1;
-            System.out.println("Загружено " + tasks.size() + " задач из базы данных");
+            log.info("Загружено {} задач в память, nextId={}", tasks.size(), nextId);
         } else {
-            System.out.println("База данных пуста, начинаем с чистого списка");
+            log.info("База данных пуста, стартуем с пустого списка");
         }
     }
 
@@ -31,7 +34,7 @@ public class TaskHandler {
         task.setId(nextId++);
         tasks.add(task);
         syncService.saveToDatabase(task);
-        System.out.println("Задача добавлена! (сохранена в память и БД)");
+        log.info("Задача добавлена! (сохранена в память и БД)");
     }
 
     public void removeTask(int id) {
@@ -42,12 +45,12 @@ public class TaskHandler {
             try {
                 TaskDatabaseDAO dbDAO = new TaskDatabaseDAO();
                 dbDAO.delete(id);
-                System.out.println("Задача удалена из памяти и БД");
+                log.info("Задача удалена: id={}", id);
             } catch (Exception error) {
-                System.err.println("Ошибка удаления из БД: " + error.getMessage());
+                log.error("Ошибка удаления из БД: {}", error.getMessage());
             }
         } else {
-            System.out.println("Задача с ID " + id + " не найдена");
+            log.warn("Задача с ID {} не найдена", id);
         }
     }
 
@@ -62,10 +65,10 @@ public class TaskHandler {
                 dbDAO.updateStatus(id, Status.DONE);
                 System.out.println("Задача отмечена как выполненная (обновлено в памяти и БД)");
             } catch (Exception error) {
-                System.err.println("Ошибка обновления в БД: " + error.getMessage());
+                log.error("Ошибка обновления в БД: {}", error.getMessage());
             }
         } else {
-            System.out.println("Задача с ID " + id + " не найдена");
+            log.warn("Задача с ID {} не найдена", id);
         }
     }
 
@@ -77,12 +80,12 @@ public class TaskHandler {
             try {
                 TaskDatabaseDAO dbDAO = new TaskDatabaseDAO();
                 dbDAO.updateStatus(taskToComplete.getId(), Status.DONE);
-                System.out.println("Задача '" + title + "' отмечена как выполненная");
+                log.info("Задача '{}' отмечена как выполненная", title);
             } catch (Exception error) {
-                System.err.println(" Ошибка обновления в БД: " + error.getMessage());
+                log.error(" Ошибка обновления в БД: {}", error.getMessage());
             }
         } else {
-            System.out.println("Задача с названием '" + title + "' не найдена");
+            log.warn("Задача с названием '{}' не найдена", title);
         }
     }
 
